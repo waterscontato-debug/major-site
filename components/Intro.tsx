@@ -46,13 +46,12 @@ export function Intro() {
     }
   }, [stage]);
 
-  if (stage === "done") return null;
-
   const showLogos = stage === "together" || stage === "iconAlone" || stage === "expanding";
+  const isVisible: boolean = (stage as string) !== "done";
 
   return (
     <AnimatePresence>
-      {stage !== "done" && (
+      {isVisible && (
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
