@@ -5,6 +5,13 @@ export const metadata: Metadata = {
   title: "Major — Marketing pra quem cuida de gente",
   description:
     "Agência de marketing especializada em saúde e educação. Tráfego pago, conteúdo, design e gestão estratégica pra clínicas, consultórios e escolas.",
+  // Força só o icon.png da Major. Sem essa metadata explícita, o Next.js
+  // gera <link> tanto pro favicon.ico (antigo) quanto pro icon.png.
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
   openGraph: {
     title: "Major — Marketing pra quem cuida de gente",
     description:
