@@ -78,72 +78,119 @@ function MorphText({ text }: { text: string }) {
   );
 }
 
-interface MinimalButtonProps {
+interface PillButtonProps {
   label: string;
   onClick?: () => void;
   href?: string;
   delay?: number;
+  /**
+   * Variante visual:
+   *  - 'primary' = fundo platinum, texto preto (CTA principal)
+   *  - 'ghost'   = transparente com borda
+   */
+  variant?: 'primary' | 'ghost';
+  /** Ícone customizado no lugar da seta (← →). */
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  /** Pra links externos (abre em nova aba). */
+  external?: boolean;
+  /**
+   * Adiciona um "halo" externo na cor da moldura (var(--bg)) — cria a
+   * ilusão de que a moldura está "invadindo" o pill, igual à referência.
+   */
+  halo?: boolean;
 }
 
-/** Botão minimalista — texto + linha embaixo + seta animada no hover */
-function MinimalButton({ label, onClick, href, delay = 0 }: MinimalButtonProps) {
-  const inner = (
-    <motion.span
-      whileHover="hover"
-      initial="rest"
-      animate="rest"
+/**
+ * Botão em pílula no estilo da referência "INDIVIDUAL YOGA":
+ * borda fina, padding bem balanceado, texto uppercase pequeno,
+ * setinhas opcionais nas pontas e animação no hover.
+ */
+function PillButton({
+  label,
+  onClick,
+  href,
+  delay = 0,
+  variant = 'ghost',
+  leftIcon,
+  rightIcon,
+  external,
+  halo,
+}: PillButtonProps) {
+  const isPrimary = variant === 'primary';
+
+  const bg = isPrimary ? "var(--platinum)" : "rgba(0,0,0,0.42)";
+  const fg = isPrimary ? "var(--jet-black)" : "var(--text)";
+  const borderColor = isPrimary
+    ? "var(--platinum)"
+    : "rgba(224,224,224,0.5)";
+  const iconBorder = isPrimary
+    ? "rgba(26,26,26,0.45)"
+    : "rgba(224,224,224,0.55)";
+
+  const pill = (
+    <span
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: "0.5rem",
-        fontSize: "0.92rem",
+        gap: "0.45rem",
+        fontSize: "0.78rem",
         fontWeight: 500,
         letterSpacing: "0.02em",
-        color: "var(--text)",
+        color: fg,
         fontFamily: "inherit",
-        background: "transparent",
-        border: "none",
         cursor: "pointer",
-        padding: "0.5rem 0",
-        position: "relative",
+        padding: "0.45rem 0.85rem",
+        background: bg,
+        border: `1px solid ${borderColor}`,
+        borderRadius: 999,
+        backdropFilter: isPrimary ? "none" : "blur(6px)",
+        WebkitBackdropFilter: isPrimary ? "none" : "blur(6px)",
+        whiteSpace: "nowrap",
       }}
     >
-      <span style={{ position: "relative", whiteSpace: "nowrap" }}>
-        {label}
-        {/* Linha embaixo (cresce no hover) */}
-        <motion.span
-          variants={{
-            rest: { scaleX: 0.35, originX: 0 },
-            hover: { scaleX: 1, originX: 0 },
-          }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: -4,
-            height: 1,
-            background: "currentColor",
-            display: "block",
-            transformOrigin: "left center",
-          }}
-        />
-      </span>
-      <motion.span
-        variants={{
-          rest: { x: 0 },
-          hover: { x: 4 },
+      {/* Seta esquerda (decorativa, sem animação) */}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 16,
+          height: 16,
+          borderRadius: 999,
+          border: `1px solid ${iconBorder}`,
+          fontSize: "0.55rem",
+          lineHeight: 1,
+          opacity: 0.55,
         }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ display: "inline-block", fontSize: "1.05em", lineHeight: 1 }}
       >
-        →
-      </motion.span>
-    </motion.span>
+        {leftIcon ?? "‹"}
+      </span>
+
+      <span>{label}</span>
+
+      {/* Seta direita */}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 16,
+          height: 16,
+          borderRadius: 999,
+          border: `1px solid ${iconBorder}`,
+          fontSize: "0.55rem",
+          lineHeight: 1,
+          opacity: 0.55,
+        }}
+      >
+        {rightIcon ?? "›"}
+      </span>
+    </span>
   );
 
   const wrapperStyle: React.CSSProperties = {
-    display: "block",
+    display: "inline-block",
     textDecoration: "none",
     background: "transparent",
     border: "none",
@@ -151,8 +198,6 @@ function MinimalButton({ label, onClick, href, delay = 0 }: MinimalButtonProps) 
     margin: 0,
     cursor: "pointer",
     color: "inherit",
-    textAlign: "right",
-    width: "100%",
     fontFamily: "inherit",
   };
 
@@ -161,16 +206,45 @@ function MinimalButton({ label, onClick, href, delay = 0 }: MinimalButtonProps) 
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay }}
+      className="hero-pill"
     >
-      {href ? (
-        <Link href={href} style={wrapperStyle}>
-          {inner}
-        </Link>
-      ) : (
-        <button type="button" onClick={onClick} style={wrapperStyle}>
-          {inner}
-        </button>
-      )}
+      {(() => {
+        const content = halo ? (
+          <span
+            style={{
+              display: "inline-block",
+              background: "var(--bg)",
+              padding: "clamp(10px, 1.2vw, 16px)",
+              borderRadius: 999,
+            }}
+          >
+            {pill}
+          </span>
+        ) : (
+          pill
+        );
+        if (href) {
+          return external ? (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={wrapperStyle}
+            >
+              {content}
+            </a>
+          ) : (
+            <Link href={href} style={wrapperStyle}>
+              {content}
+            </Link>
+          );
+        }
+        return (
+          <button type="button" onClick={onClick} style={wrapperStyle}>
+            {content}
+          </button>
+        );
+      })()}
     </motion.div>
   );
 }
@@ -549,21 +623,29 @@ export function Hero() {
         position: "relative",
         minHeight: "100vh",
         background: "var(--bg)",
-        overflow: "hidden",
+        // Padding cria a "moldura" externa que permite as bordas arredondadas
+        // da imagem ficarem visíveis e os pills "comerem" a borda.
+        padding: "clamp(18px, 2.6vw, 36px)",
         display: "flex",
         alignItems: "flex-end",
-        paddingBottom: "clamp(4rem, 12vh, 9rem)",
+        boxSizing: "border-box",
       }}
     >
-      {/* Carrossel de fundo — fotos dos sócios em fade lento */}
+      {/* Carrossel de fundo — fotos dos sócios em fade lento.
+          Tem border-radius pra parecer um "card" dentro da moldura. */}
       <div
         aria-hidden
+        className="hero-image-wrap"
         style={{
           position: "absolute",
-          inset: 0,
+          top: "clamp(18px, 2.6vw, 36px)",
+          right: "clamp(18px, 2.6vw, 36px)",
+          bottom: "clamp(18px, 2.6vw, 36px)",
+          left: "clamp(18px, 2.6vw, 36px)",
           zIndex: 0,
           overflow: "hidden",
           pointerEvents: "none",
+          borderRadius: "clamp(16px, 1.8vw, 24px)",
         }}
       >
         <AnimatePresence mode="sync">
@@ -611,23 +693,31 @@ export function Hero() {
         />
       </div>
 
-      {/* Logo tipográfica no canto superior esquerdo */}
+      {/* Logo tipográfica no canto superior esquerdo — mesmo "esquema" dos pills
+          (halo da cor da moldura), porém sem borda. */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
         style={{
           position: "absolute",
-          top: "clamp(1.5rem, 3vw, 2.5rem)",
-          left: "clamp(1.5rem, 5vw, 4.5rem)",
-          zIndex: 2,
+          top: "calc(clamp(18px, 2.6vw, 36px) + clamp(14px, 1.8vw, 24px))",
+          left: "calc(clamp(18px, 2.6vw, 36px) + clamp(14px, 1.8vw, 24px))",
+          zIndex: 3,
+          display: "inline-flex",
+          alignItems: "center",
+          padding: "0.45rem 0.95rem",
+          background: "rgba(0,0,0,0.42)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          borderRadius: 999,
         }}
       >
         <img
           src="/logo-text.png"
           alt="MAJOR"
           style={{
-            height: "clamp(22px, 2.4vw, 32px)",
+            height: "clamp(18px, 2vw, 24px)",
             width: "auto",
             objectFit: "contain",
             display: "block",
@@ -635,60 +725,37 @@ export function Hero() {
         />
       </motion.div>
 
-      {/* Portal do colaborador — top-right, simétrico com a logo */}
-      <motion.a
-        href="https://app.agenciamajor.com.br"
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
-        whileHover={{ y: -1 }}
-        style={{
-          position: "absolute",
-          top: "clamp(1.5rem, 3vw, 2.5rem)",
-          right: "clamp(1.5rem, 5vw, 4.5rem)",
-          zIndex: 2,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.4rem",
-          padding: "0.45rem 0.85rem",
-          background: "transparent",
-          color: "var(--text)",
-          border: "1px solid rgba(255,255,255,0.22)",
-          borderRadius: 999,
-          fontSize: "0.78rem",
-          fontWeight: 500,
-          letterSpacing: "0.02em",
-          textDecoration: "none",
-          transition: "background 0.25s ease, color 0.25s ease, border-color 0.25s ease",
-        }}
-        className="hero-portal-btn"
-      >
-        <span className="hero-portal-btn-text">Portal do colaborador</span>
-        <span className="hero-portal-btn-short">Portal</span>
-        <span style={{ fontSize: "0.85em", lineHeight: 1 }}>↗</span>
-      </motion.a>
-
-      {/* Textura sutil ao fundo */}
+      {/* Portal do colaborador — top-right, levemente mais pra direita
+          (alinhado com o cluster dos CTAs lá embaixo). */}
       <div
-        aria-hidden
         style={{
           position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(circle at 30% 70%, rgba(91,141,239,0.06), transparent 60%)",
-          pointerEvents: "none",
+          top: "clamp(8px, 1.3vw, 18px)",
+          right: "clamp(8px, 1.3vw, 18px)",
+          zIndex: 3,
         }}
-      />
+      >
+        <PillButton
+          label="Portal do colaborador"
+          href="https://app.agenciamajor.com.br"
+          delay={0.25}
+          variant="ghost"
+          rightIcon="↗"
+          external
+          halo
+        />
+      </div>
 
-      {/* Texto centralizado verticalmente, alinhado à esquerda */}
+
+      {/* Texto: alinhado à esquerda com distância da borda interna da imagem
+          (padding da moldura + respiro extra). */}
       <div
         style={{
           position: "relative",
           width: "100%",
-          paddingLeft: "clamp(1.5rem, 5vw, 4.5rem)",
-          paddingRight: "clamp(1.5rem, 5vw, 4.5rem)",
+          paddingLeft: "calc(clamp(18px, 2.6vw, 36px) + clamp(18px, 2.5vw, 40px))",
+          paddingRight: "calc(clamp(18px, 2.6vw, 36px) + clamp(18px, 2.5vw, 40px))",
+          paddingBottom: "calc(clamp(18px, 2.6vw, 36px) + clamp(18px, 2.5vw, 40px))",
           zIndex: 2,
         }}
       >
@@ -754,38 +821,46 @@ export function Hero() {
         </h1>
       </div>
 
-      {/* 3 botões minimalistas no canto inferior direito, alinhados com o título */}
+      {/* Cluster de CTAs em pílula CRUZANDO a borda inferior direita da imagem
+          (metade dentro / metade fora) — efeito "ENTRE EM CONTATO" cortando
+          a moldura, igual à referência. Os pills agora são compactos. */}
+      {/* HALO ÚNICO agrupando os 3 pills — com cantos CÔNCAVOS conectando
+          com a borda da imagem (SVG inline). Cria a impressão de que a
+          moldura é contínua e "abraça" o cluster, sem mostrar o fundo. */}
       <div
-        className="hero-cta-stack"
+        className="hero-cta-cluster"
         style={{
           position: "absolute",
-          bottom: "clamp(2rem, 8vh, 9rem)",
-          right: "clamp(1.5rem, 5vw, 4.5rem)",
+          bottom: "clamp(8px, 1.3vw, 18px)",
+          right: "clamp(8px, 1.3vw, 18px)",
+          zIndex: 3,
+          background: "var(--bg)",
+          padding: "clamp(10px, 1.2vw, 16px)",
+          borderRadius: 999,
           display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          gap: "clamp(0.9rem, 1.6vw, 1.4rem)",
-          zIndex: 2,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: "4px",
         }}
       >
-        <MinimalButton
+        <PillButton
+          label="Conheça nossos serviços"
+          href="#servicos"
+          delay={1.8}
+          variant="ghost"
+        />
+        <PillButton
+          label="Monte sua proposta"
+          href="#proposta"
+          delay={1.65}
+          variant="ghost"
+        />
+        <PillButton
           label="Entre em contato"
           onClick={() => setModalOpen(true)}
           delay={1.5}
+          variant="primary"
         />
-        <div
-          className="hero-cta-secondary"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            gap: "clamp(0.9rem, 1.6vw, 1.4rem)",
-            width: "100%",
-          }}
-        >
-          <MinimalButton label="Monte sua proposta" href="#proposta" delay={1.65} />
-          <MinimalButton label="Conheça nossos serviços" href="#servicos" delay={1.8} />
-        </div>
       </div>
 
       <AnimatePresence>
@@ -793,43 +868,20 @@ export function Hero() {
       </AnimatePresence>
 
       <style>{`
-        .hero-portal-btn:hover {
-          background: var(--platinum) !important;
-          color: var(--jet-black) !important;
-          border-color: var(--platinum) !important;
-        }
-
-        /* Mobile: Portal vira só "Portal ↗" pra caber */
-        @media (max-width: 480px) {
-          .hero-portal-btn {
-            font-size: 0.7rem !important;
-            padding: 0.4rem 0.7rem !important;
-          }
-          .hero-portal-btn-text {
-            display: none !important;
-          }
-          .hero-portal-btn-short {
-            display: inline !important;
-          }
-        }
-        .hero-portal-btn-short { display: none; }
-
-        /* Mobile e tablet (≤960px): esconde os 2 CTAs secundários
-           pra deixar só "Entre em contato" — texto mais limpo,
-           foco em uma ação principal. */
+        /* Tablet (≤960px): esconde os 2 CTAs secundários, deixa só "Entre em contato" */
         @media (max-width: 960px) {
-          .hero-cta-secondary {
+          .hero-cta-cluster > div:nth-child(1),
+          .hero-cta-cluster > div:nth-child(2) {
             display: none !important;
           }
-          .hero-cta-stack {
-            bottom: clamp(1.5rem, 5vh, 3rem) !important;
-          }
         }
-        /* Em mobile real (≤640px) o botão fica ainda mais compacto */
+
+        /* Mobile real (≤640px): pills um pouco menores */
         @media (max-width: 640px) {
-          .hero-cta-stack button span,
-          .hero-cta-stack a span {
-            font-size: 0.82rem !important;
+          .hero-pill button > span,
+          .hero-pill a > span {
+            font-size: 0.72rem !important;
+            padding: 0.4rem 0.75rem !important;
           }
         }
       `}</style>

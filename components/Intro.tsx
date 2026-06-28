@@ -22,6 +22,15 @@ export function Intro() {
     console.log("[Intro] Iniciando animação");
     document.body.style.overflow = "hidden";
 
+    // Garante que o site SEMPRE abre no topo (hero) — desabilita scroll
+    // restoration do browser e força scroll pra (0, 0) no mount inicial.
+    if (typeof window !== "undefined") {
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+    }
+
     const timers: NodeJS.Timeout[] = [];
     timers.push(setTimeout(() => { console.log("[Intro] together"); setStage("together"); }, 200));
     timers.push(setTimeout(() => { console.log("[Intro] iconAlone"); setStage("iconAlone"); }, 1400));
