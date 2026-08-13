@@ -8,6 +8,7 @@ import { Posicionamento } from "@/components/Posicionamento";
 import { Servicos } from "@/components/Servicos";
 import { Proposta } from "@/components/Proposta";
 import { VideoBg } from "@/components/VideoBg";
+import { CorridorSection } from "@/components/CorridorSection";
 import { VideoShowcase } from "@/components/VideoShowcase";
 import { InstagramFeed } from "@/components/InstagramFeed";
 import { Footer } from "@/components/Footer";
@@ -26,6 +27,7 @@ export default function Home() {
         <Major2026 />
         <PortfolioCarrossel />
         <VideoBg />
+        <CorridorSection />
         <Proposta />
         <InstagramFeed />
       </main>
