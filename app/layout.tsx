@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
+
+// Google Tag Manager — container do site agenciamajor.com.br
+const GTM_ID = "GTM-WX2D8B9B";
 
 const SITE_URL = "https://agenciamajor.com.br";
 const SITE_NAME = "Major";
@@ -118,8 +122,37 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}
         />
+        {/* Google Tag Manager — carregado no <head> com afterInteractive
+            pra não bloquear o first paint. Centraliza pixels (Google Ads,
+            Meta, Analytics, conversões, etc) em UM ponto sem precisar
+            mexer no código depois. */}
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.start'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${GTM_ID}');
+            `,
+          }}
+        />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* GTM noscript fallback — entrega o pixel mesmo se JS estiver
+            desativado (raro, mas Google Ads exige). */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+        {children}
+      </body>
     </html>
   );
 }

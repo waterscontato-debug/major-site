@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { Clientes } from "@/components/Clientes";
 import { Paz } from "@/components/Paz";
 import { Major2026 } from "@/components/Major2026";
+import { PortfolioCarrossel } from "@/components/PortfolioCarrossel";
 import { Posicionamento } from "@/components/Posicionamento";
 import { Servicos } from "@/components/Servicos";
 import { Proposta } from "@/components/Proposta";
@@ -23,6 +24,7 @@ export default function Home() {
         <Servicos />
         <Paz />
         <Major2026 />
+        <PortfolioCarrossel />
         <VideoBg />
         <Proposta />
         <InstagramFeed />
