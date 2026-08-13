@@ -44,74 +44,111 @@ const CTAS: CTA[] = [
 const FLIP_DURATION = 0.32;
 const FLIP_STAGGER = 0.028;
 
-function FlipTitle({ children }: { children: string }) {
-  const palavras = children.split(" ");
+/** Segmento do título: cada um pode ter estilo próprio (Doner display ou serif italic). */
+interface Segment {
+  text: string;
+  italic?: boolean;
+}
+
+const SEGMENT_STYLE: Record<"doner" | "italic", React.CSSProperties> = {
+  doner: {
+    fontFamily: "var(--font-display)",
+    fontWeight: 300,
+    textTransform: "uppercase",
+    letterSpacing: "-0.025em",
+  },
+  italic: {
+    fontFamily: "'Times New Roman', Georgia, serif",
+    fontStyle: "italic",
+    fontWeight: 400,
+    textTransform: "lowercase",
+    letterSpacing: "-0.005em",
+    fontSize: "1.18em",
+  },
+};
+
+function FlipWord({ palavra, offset = 0 }: { palavra: string; offset?: number }) {
+  return (
+    <span
+      style={{
+        position: "relative",
+        display: "inline-block",
+        overflow: "hidden",
+        verticalAlign: "top",
+        lineHeight: 1.05,
+      }}
+    >
+      <span style={{ display: "inline-block" }}>
+        {palavra.split("").map((letra, i) => (
+          <motion.span
+            key={i}
+            variants={{ initial: { y: 0 }, hovered: { y: "-100%" } }}
+            transition={{ duration: FLIP_DURATION, ease: "easeInOut", delay: FLIP_STAGGER * (offset + i) }}
+            style={{ display: "inline-block" }}
+          >
+            {letra}
+          </motion.span>
+        ))}
+      </span>
+      <span aria-hidden style={{ position: "absolute", inset: 0, display: "inline-block" }}>
+        {palavra.split("").map((letra, i) => (
+          <motion.span
+            key={i}
+            variants={{ initial: { y: "100%" }, hovered: { y: 0 } }}
+            transition={{ duration: FLIP_DURATION, ease: "easeInOut", delay: FLIP_STAGGER * (offset + i) }}
+            style={{ display: "inline-block" }}
+          >
+            {letra}
+          </motion.span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
+function FlipTitle({ segments }: { segments: Segment[] }) {
+  let letraGlobal = 0;
   return (
     <motion.h2
       initial="initial"
       whileHover="hovered"
       whileInView={{ opacity: 1, y: 0 }}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {...({ transition: { duration: 0.8, delay: 0.1 } } as any)}
       viewport={{ once: true, margin: "-80px" }}
       style={{
         fontFamily: "var(--font-display)",
-        fontWeight: 500,
-        fontSize: "clamp(2rem, 5vw, 4rem)",
+        fontWeight: 300,
+        fontSize: "clamp(2rem, 4.5vw, 3.6rem)",
         color: "var(--jet-black)",
         margin: 0,
         marginBottom: "1.4rem",
-        lineHeight: 0.95,
-        letterSpacing: "-0.03em",
+        lineHeight: 1.05,
+        letterSpacing: "-0.025em",
         textTransform: "uppercase",
         maxWidth: 920,
         cursor: "default",
-        // opacity/y iniciais pro reveal ao entrar na viewport
         opacity: 0,
         transform: "translateY(14px)",
       }}
     >
-      {palavras.map((palavra, wi) => (
-        <span
-          key={wi}
-          style={{
-            position: "relative",
-            display: "inline-block",
-            overflow: "hidden",
-            verticalAlign: "top",
-            lineHeight: 0.95,
-          }}
-        >
-          <span style={{ display: "inline-block" }}>
-            {palavra.split("").map((letra, i) => (
-              <motion.span
-                key={i}
-                variants={{ initial: { y: 0 }, hovered: { y: "-100%" } }}
-                transition={{ duration: FLIP_DURATION, ease: "easeInOut", delay: FLIP_STAGGER * i }}
-                style={{ display: "inline-block" }}
-              >
-                {letra}
-              </motion.span>
-            ))}
+      {segments.map((seg, si) => {
+        const palavras = seg.text.split(" ");
+        const estilo = seg.italic ? SEGMENT_STYLE.italic : SEGMENT_STYLE.doner;
+        return (
+          <span key={si} style={estilo}>
+            {palavras.map((palavra, wi) => {
+              const startOffset = letraGlobal;
+              letraGlobal += palavra.length;
+              return (
+                <span key={wi}>
+                  <FlipWord palavra={palavra} offset={startOffset} />
+                  {wi < palavras.length - 1 && <span>&nbsp;</span>}
+                </span>
+              );
+            })}
+            {si < segments.length - 1 && <span>&nbsp;</span>}
           </span>
-          <span
-            aria-hidden
-            style={{ position: "absolute", inset: 0, display: "inline-block" }}
-          >
-            {palavra.split("").map((letra, i) => (
-              <motion.span
-                key={i}
-                variants={{ initial: { y: "100%" }, hovered: { y: 0 } }}
-                transition={{ duration: FLIP_DURATION, ease: "easeInOut", delay: FLIP_STAGGER * i }}
-                style={{ display: "inline-block" }}
-              >
-                {letra}
-              </motion.span>
-            ))}
-          </span>
-          {wi < palavras.length - 1 && <span>&nbsp;</span>}
-        </span>
-      ))}
+        );
+      })}
     </motion.h2>
   );
 }
@@ -177,7 +214,13 @@ export function Posicionamento() {
 
         {/* Título manifesto — fonte Doner + flip letra-por-letra no hover.
             Efeito só em desktop (mobile não tem hover — o texto continua legível). */}
-        <FlipTitle>Da estratégia ao primeiro reels publicado.</FlipTitle>
+        <FlipTitle
+          segments={[
+            { text: "Da estratégia" },
+            { text: "ao primeiro reels publicado", italic: true },
+            { text: "." },
+          ]}
+        />
 
         {/* Subtítulo — explicação curta do diferencial */}
         <motion.p
