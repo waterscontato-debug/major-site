@@ -9,6 +9,7 @@ import { Servicos } from "@/components/Servicos";
 import { Proposta } from "@/components/Proposta";
 import { VideoBg } from "@/components/VideoBg";
 import { CorridorSection } from "@/components/CorridorSection";
+import { BentoClientesSection } from "@/components/BentoClientesSection";
 import { VideoShowcase } from "@/components/VideoShowcase";
 import { InstagramFeed } from "@/components/InstagramFeed";
 import { Footer } from "@/components/Footer";
@@ -28,6 +29,7 @@ export default function Home() {
         <PortfolioCarrossel />
         <VideoBg />
         <CorridorSection />
+        <BentoClientesSection />
         <Proposta />
         <InstagramFeed />
       </main>
