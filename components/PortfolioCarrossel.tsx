@@ -21,18 +21,15 @@ import "swiper/css/autoplay";
  * produções, é só trocar as URLs no array IMAGES.
  */
 
-const IMAGES: { src: string; alt: string }[] = [
-  { src: "/clientes/prancheta-3.png",  alt: "Case Major 01" },
-  { src: "/clientes/prancheta-6.png",  alt: "Case Major 02" },
-  { src: "/clientes/prancheta-10.png", alt: "Case Major 03" },
-  { src: "/clientes/prancheta-14.png", alt: "Case Major 04" },
-  { src: "/clientes/prancheta-16.png", alt: "Case Major 05" },
-  { src: "/clientes/prancheta-19.png", alt: "Case Major 06" },
-  { src: "/clientes/prancheta-22.png", alt: "Case Major 07" },
-  { src: "/clientes/prancheta-25.png", alt: "Case Major 08" },
-];
+// Aguardando as fotos reais do portfólio. Quando chegarem, joga os
+// arquivos em /public/portfolio/ e preenche o array abaixo — o
+// carrossel aparece automaticamente.
+const IMAGES: { src: string; alt: string }[] = [];
 
 export function PortfolioCarrossel() {
+  // Enquanto não há imagens, a seção fica invisível — sem lugar vazio no site.
+  if (IMAGES.length === 0) return null;
+
   const css = `
     .major-carrossel {
       width: 100%;
