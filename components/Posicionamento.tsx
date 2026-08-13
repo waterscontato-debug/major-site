@@ -32,6 +32,90 @@ const CTAS: CTA[] = [
   },
 ];
 
+/**
+ * Título com efeito flip letra-por-letra no hover — fonte Doner Display.
+ * Cada palavra é uma unidade (permite quebra de linha natural). Dentro
+ * dela, duas cópias empilhadas: a de cima sobe, a de baixo entra por
+ * baixo. Cascade via delay proporcional ao índice da letra.
+ *
+ * Efeito só em desktop com hover. Em mobile o texto continua legível
+ * (a variante `initial` é o estado natural).
+ */
+const FLIP_DURATION = 0.32;
+const FLIP_STAGGER = 0.028;
+
+function FlipTitle({ children }: { children: string }) {
+  const palavras = children.split(" ");
+  return (
+    <motion.h2
+      initial="initial"
+      whileHover="hovered"
+      whileInView={{ opacity: 1, y: 0 }}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {...({ transition: { duration: 0.8, delay: 0.1 } } as any)}
+      viewport={{ once: true, margin: "-80px" }}
+      style={{
+        fontFamily: "var(--font-display)",
+        fontWeight: 500,
+        fontSize: "clamp(2rem, 5vw, 4rem)",
+        color: "var(--jet-black)",
+        margin: 0,
+        marginBottom: "1.4rem",
+        lineHeight: 0.95,
+        letterSpacing: "-0.03em",
+        textTransform: "uppercase",
+        maxWidth: 920,
+        cursor: "default",
+        // opacity/y iniciais pro reveal ao entrar na viewport
+        opacity: 0,
+        transform: "translateY(14px)",
+      }}
+    >
+      {palavras.map((palavra, wi) => (
+        <span
+          key={wi}
+          style={{
+            position: "relative",
+            display: "inline-block",
+            overflow: "hidden",
+            verticalAlign: "top",
+            lineHeight: 0.95,
+          }}
+        >
+          <span style={{ display: "inline-block" }}>
+            {palavra.split("").map((letra, i) => (
+              <motion.span
+                key={i}
+                variants={{ initial: { y: 0 }, hovered: { y: "-100%" } }}
+                transition={{ duration: FLIP_DURATION, ease: "easeInOut", delay: FLIP_STAGGER * i }}
+                style={{ display: "inline-block" }}
+              >
+                {letra}
+              </motion.span>
+            ))}
+          </span>
+          <span
+            aria-hidden
+            style={{ position: "absolute", inset: 0, display: "inline-block" }}
+          >
+            {palavra.split("").map((letra, i) => (
+              <motion.span
+                key={i}
+                variants={{ initial: { y: "100%" }, hovered: { y: 0 } }}
+                transition={{ duration: FLIP_DURATION, ease: "easeInOut", delay: FLIP_STAGGER * i }}
+                style={{ display: "inline-block" }}
+              >
+                {letra}
+              </motion.span>
+            ))}
+          </span>
+          {wi < palavras.length - 1 && <span>&nbsp;</span>}
+        </span>
+      ))}
+    </motion.h2>
+  );
+}
+
 /** Seta diagonal pro canto direito do botão, estilo PRB */
 function ArrowUpRight() {
   return (
@@ -91,40 +175,9 @@ export function Posicionamento() {
           (posicionamento)
         </motion.div>
 
-        {/* Título manifesto — grande, leve, com pontinho */}
-        <motion.h2
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 300,
-            fontSize: "clamp(2rem, 4.5vw, 3.6rem)",
-            color: "var(--jet-black)",
-            margin: 0,
-            marginBottom: "1.4rem",
-            lineHeight: 1.05,
-            letterSpacing: "-0.025em",
-            textTransform: "uppercase",
-            maxWidth: 920,
-          }}
-        >
-          Da estratégia{" "}
-          <span
-            style={{
-              fontFamily: "'Times New Roman', Georgia, serif",
-              fontStyle: "italic",
-              fontWeight: 400,
-              textTransform: "lowercase",
-              letterSpacing: "-0.005em",
-              fontSize: "1.18em",
-            }}
-          >
-            ao primeiro reels publicado
-          </span>
-          .
-        </motion.h2>
+        {/* Título manifesto — fonte Doner + flip letra-por-letra no hover.
+            Efeito só em desktop (mobile não tem hover — o texto continua legível). */}
+        <FlipTitle>Da estratégia ao primeiro reels publicado.</FlipTitle>
 
         {/* Subtítulo — explicação curta do diferencial */}
         <motion.p
