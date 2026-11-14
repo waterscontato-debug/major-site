@@ -7,22 +7,21 @@ const GTM_ID = "GTM-WX2D8B9B";
 
 const SITE_URL = "https://agenciamajor.com.br";
 const SITE_NAME = "Major";
-const TITLE = "Major — Agência de marketing pra clínicas, consultórios e escolas";
+const TITLE = "Major — Agência de publicidade em Brasília | Clínicas, escolas e construtoras";
 const DESCRIPTION =
-  "Agência de marketing especializada em saúde e educação. Tráfego pago, conteúdo, design e estratégia pra clínicas, consultórios e escolas crescerem com previsibilidade.";
+  "Agência de publicidade e marketing em Brasília especializada em clínicas odontológicas, clínicas cirúrgicas, escolas e construtoras. Estratégia, conteúdo, produção audiovisual e tráfego pago no DF.";
 const KEYWORDS = [
-  "agência de marketing",
-  "marketing pra clínicas",
-  "marketing médico",
-  "marketing pra dentistas",
-  "marketing pra escolas",
-  "tráfego pago",
-  "social media",
-  "agência criativa",
-  "marketing pra saúde",
   "agência de publicidade Brasília",
+  "agência de marketing Brasília",
+  "agência de publicidade DF",
+  "marketing odontológico Brasília",
+  "marketing para clínicas cirúrgicas",
+  "marketing para escolas Brasília",
+  "marketing para construtoras Brasília",
+  "marketing imobiliário DF",
+  "tráfego pago Brasília",
+  "produção audiovisual Brasília",
   "agência Major",
-  "Major agência",
 ];
 
 export const metadata: Metadata = {
@@ -84,26 +83,40 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+// ProfessionalService (sub-tipo de LocalBusiness): diz ao Google que a
+// Major é uma empresa local de Brasília — conta pra busca "agência de
+// publicidade em Brasília". Endereço completo entra quando o Roger passar.
 const ORGANIZATION_SCHEMA = {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": "ProfessionalService",
+  "@id": `${SITE_URL}/#organization`,
   name: "Major",
-  alternateName: "Major Agência",
+  alternateName: ["Agência Major", "Major Agência"],
   url: SITE_URL,
   logo: `${SITE_URL}/logo-major.png`,
+  image: `${SITE_URL}/equipe.jpg`,
   description: DESCRIPTION,
+  telephone: "+55-61-98279-2200",
+  email: "contato@agenciamajor.com.br",
   sameAs: ["https://www.instagram.com/major.agencia/"],
   address: {
     "@type": "PostalAddress",
+    addressLocality: "Brasília",
+    addressRegion: "DF",
     addressCountry: "BR",
   },
-  areaServed: "BR",
-  serviceType: [
-    "Marketing digital",
+  areaServed: [
+    { "@type": "City", name: "Brasília" },
+    { "@type": "State", name: "Distrito Federal" },
+  ],
+  knowsAbout: [
+    "Marketing odontológico",
+    "Marketing para clínicas cirúrgicas",
+    "Marketing para escolas",
+    "Marketing para construtoras",
     "Tráfego pago",
-    "Social media",
-    "Design",
-    "Estratégia de marca",
+    "Produção audiovisual",
+    "Branding",
   ],
 };
 

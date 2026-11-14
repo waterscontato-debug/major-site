@@ -10,6 +10,8 @@
  * porque é a cor reconhecível do app.
  */
 
+import { SEGMENTOS } from "@/lib/segmentos";
+
 const WHATSAPP_NUMBER = "5561982792200"; // (61) 98279-2200
 const WHATSAPP_MSG = "Oi! Vim pelo site da Major e gostaria de conversar.";
 
@@ -125,7 +127,7 @@ export function Footer() {
           margin: "0 auto",
           padding: "clamp(3rem, 5vw, 4rem) clamp(1.5rem, 5vw, 3rem) clamp(2rem, 4vw, 3rem)",
           display: "grid",
-          gridTemplateColumns: "1.5fr 1fr 1fr",
+          gridTemplateColumns: "1.5fr 1fr 1fr 1fr",
           gap: "clamp(2.5rem, 5vw, 4rem)",
         }}
       >
@@ -169,17 +171,17 @@ export function Footer() {
           </div>
           <ul style={{ listStyle: "none", display: "grid", gap: "0.7rem", padding: 0 }}>
             <li>
-              <a href="#servicos" style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
+              <a href="/#servicos" style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
                 O que fazemos
               </a>
             </li>
             <li>
-              <a href="#major-2026" style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
+              <a href="/#major-2026" style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
                 Portfólio
               </a>
             </li>
             <li>
-              <a href="#proposta" style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
+              <a href="/#proposta" style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
                 Montar proposta
               </a>
             </li>
@@ -193,6 +195,29 @@ export function Footer() {
                 Portal do colaborador →
               </a>
             </li>
+          </ul>
+        </div>
+
+        <div>
+          <div
+            style={{
+              fontSize: "0.75rem",
+              color: "var(--dim)",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              marginBottom: "1rem",
+            }}
+          >
+            Segmentos
+          </div>
+          <ul style={{ listStyle: "none", display: "grid", gap: "0.7rem", padding: 0 }}>
+            {SEGMENTOS.map((s) => (
+              <li key={s.slug}>
+                <a href={`/${s.slug}`} style={{ color: "var(--muted)", fontSize: "0.95rem" }}>
+                  {s.nome}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
 

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SEGMENTOS } from "@/lib/segmentos";
 
 const SITE_URL = "https://agenciamajor.com.br";
 
@@ -17,11 +18,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    {
-      url: `${SITE_URL}/servicos`,
+    ...SEGMENTOS.map((s) => ({
+      url: `${SITE_URL}/${s.slug}`,
       lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
   ];
 }

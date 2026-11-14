@@ -1,3 +1,6 @@
+// ponytail: página "em construção" fora do Google até ter conteúdo real.
+export const metadata = { robots: { index: false, follow: true } };
+
 export default function ServicosPage() {
   return (
     <main
